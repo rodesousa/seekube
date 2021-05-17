@@ -14,10 +14,9 @@ defmodule SeekubeWeb.Router do
   end
 
   scope "/", SeekubeWeb do
-    pipe_through :browser
+    pipe_through :api
 
-    get "/", PageController, :index
-    get "/datastore", DatastoreController, :datastore
+    post "/datastore/:id", DatastoreController, :datastore
   end
 
   # Other scopes may use custom stacks.

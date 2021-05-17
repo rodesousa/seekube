@@ -4,6 +4,7 @@ defmodule Seekube.Application do
   @moduledoc false
 
   use Application
+  use Supervisor
 
   def start(_type, _args) do
     children = [
@@ -12,7 +13,16 @@ defmodule Seekube.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Seekube.PubSub},
       # Start the Endpoint (http/https)
-      SeekubeWeb.Endpoint
+      SeekubeWeb.Endpoint,
+      worker(
+        Mongo,
+        [[
+          name: :mongo,
+          url: System.get_env("MONGO_URL"),
+          ssl: true,
+          ssl_opts: [ciphers: ['AES256-GCM-SHA384'], versions: [:"tlsv1.2"]]
+        ]]
+      )
       # Start a worker by calling: Seekube.Worker.start_link(arg)
       # {Seekube.Worker, arg}
     ]

@@ -13,12 +13,13 @@ config :seekube, SeekubeWeb.Endpoint,
   secret_key_base: "IkE7uLUqnJ2vq6chBTuW9aYl14I/nzadOFRcjE7FP0SzAoRSNSGSuiAovCQXFxDT",
   render_errors: [view: SeekubeWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Seekube.PubSub,
-  live_view: [signing_salt: "Ck1s5/2c"]
-
-# Configures Elixir's Logger
-config :logger, :console,
-  format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  live_view: [signing_salt: "Ck1s5/2c"],
+  # Configures Elixir's Logger
+  mongo_url:
+    config(:logger, :console,
+      format: "$time $metadata[$level] $message\n",
+      metadata: [:request_id]
+    )
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
@@ -26,3 +27,9 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+System.get_env("MONGO_URL") ||
+  raise """
+ environment variable MONGO_URL is missing.
+ For example: mongodb+srv://***:***@***/***=true&w=majority
+ """
